@@ -1,13 +1,19 @@
 <?php
+class HomeController {
+    private $userModel;
 
-namespace App\Controllers;
+    public function __construct() {
+        $this->userModel = new UserModel();
+    }
 
-use Core\Controller;
-
-class HomeController extends Controller
-{
-    public function index()
-    {
-        $this->view('home/index');
+    public function shorten() {
+        if (isset($_POST['url'])) {
+            $url = $_POST['url'];
+            $code = $this->userModel->createShortUrl($url);
+            echo "Link encurtado: http://seusite.com/" . $code;
+        } else {
+            echo "URL inválida!";
+        }
     }
 }
+?>

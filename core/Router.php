@@ -1,42 +1,15 @@
 <?php
-
-namespace Core;
-
-class Router
-{
-    public function run()
-    {
+class Router {
+    public function handleRequest() {
         $url = $_SERVER['REQUEST_URI'];
-
-        switch ($url) {
-            case '/':
-                $controllerName = 'App\controllers\HomeController';
-                $actionName = 'index';
-                break;
-            case '/register':
-                $controllerName = 'App\controllers\AuthController';
-                $actionName = 'register';
-                break;
-            case '/login':
-                $controllerName = 'App\controllers\AuthController';
-                $actionName = 'login';
-                break;
-             //Adicionar novas rotas aqui....
-            default:
-                http_response_code(404);
-                echo "Página não encontrada!";
-                exit;
-        }
-
-        if (class_exists($controllerName)) {
-            $controller = new $controllerName();
-            if (method_exists($controller, $actionName)) {
-                $controller->$actionName();
-            } else {
-                echo "Método '$actionName' não encontrado no controller '$controllerName'!";
-            }
+        if ($url === '/' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            (new HomeController())->shorten();
+        } elseif (preg_match('/^\/([a-zA-Z0-9]{6})$/', $url, $matches)) {
+            $code = $matches[1];
+            (new AuthController())->redirect($code);
         } else {
-            echo "Controller '$controllerName' não encontrado!";
+            echo "Página não encontrada!";
         }
     }
 }
+?>
